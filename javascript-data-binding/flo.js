@@ -5,7 +5,7 @@ var jade = require('jade');
 var path = require('path');
 var yaml = require('yamljs');
 
-var dir = './src/';
+var dir = './';
 var port = 8888;
 
 var server = flo(dir, {
