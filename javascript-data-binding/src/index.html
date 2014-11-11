@@ -1,0 +1,181 @@
+<!DOCTYPE html><html><head><title>JavaScript Data Binding</title><link rel="stylesheet" href="components/reveal.js/css/reveal.min.css"><link rel="stylesheet" href="components/reveal.js/css/theme/default.css"><link rel="stylesheet" href="components/reveal.js/lib/css/zenburn.css"><link rel="stylesheet" href="css/main.css"></head><body><div class="reveal"><div class="slides"><section><h1>JavaScript Data Binding</h1><br><ul class="no"><li> <a href="mailto:tadeuzagallo@gmail.com">tadeuzagallo@gmail.com</a></li><li><a href="http://twitter.com/tadeuzagallo">@tadeuzagallo</a></li><li><a href="http://github.com/tadeuzagallo">github.com/tadeuzagallo</a></li><li><a href="http://tadeuzagallo.com">tadeuzagallo.com</a></li></ul></section><section><section><h1>Data Binding</h1><blockquote>Data binding is the process that establishes a connection between the application UI (User Interface) and business logic. If the settings and notifications are correctly set, the data reflects changes when made. It can also mean that when the UI is changed, the underlying data will reflect that change.</blockquote></section><section><p>Qualquer alteração de dados deve refletir na interface</p></section><section><h1>Nosso amigo jquery</h1><pre><code data-trim class="hljs javascript">var $input = $('input');
+var $label = $('label');
+
+$input.on('input', function (e) {
+  $label.text($input.val());
+});
+</code></pre></section><section><h1>Angular</h1><pre><code data-trim class="hljs html">&lt;input type=&quot;text&quot; ng-model=&quot;yourName&quot; placeholder=&quot;Enter a name here&quot;&gt;
+&lt;h1&gt;Hello {{yourName}}!&lt;/h1&gt;
+</code></pre></section></section><section><section data-markdown><script type="text/template" data-trim>## Analisando alguns frameworks...
+
+- Angular
+- Ember
+- Backbone
+- React
+</script></section><section><h1>Trends - 01/2013 a 11/2014</h1><img src="images/trends.png"></section></section><section><section><h1>Two-Way Data Binding</h1><p>Sempre que o estado de um objeto é alterado a interface deve ser atualizada para o novo estado</p></section><section><h1>Mas...</h1><p>JavaScript não tem KVO... ainda...
+Cada framework resolveu isso com diferentes estratégias
+</p></section></section><section><section data-markdown><script type="text/template" data-trim>## Backbone 
+Pub Sub, `.render()`
+</script></section><section><pre><code data-trim class="hljs javascript">var TodoView = Backbone.View.extend({
+  tagName: &quot;li&quot;,
+  template: _.template($('#item-template').html()),
+  initialize: function() {
+    this.listenTo(this.model, 'change', this.render);
+    this.listenTo(this.model, 'destroy', this.remove);
+    },
+  render: function() {
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  }
+});
+
+new TodoView({ model: model });
+</code></pre></section><section data-markdown><script type="text/template" data-trim>### Pros
+
+- Simples
+- Relativamente Desacoplado
+</script></section><section data-markdown><script type="text/template" data-trim>### Cons
+
+- Repetitivo
+- Fluxo obscuro de dados
+</script></section></section><section><section data-markdown><script type="text/template" data-trim>## Ember
+`.set(key, value)`
+</script></section><section><pre><code data-trim class="hljs javascript">var TodoController = Ember.ObjectController.extend({
+  isEditing: false,
+  actions: {
+    editTodo: function () {
+      this.set('isEditing', true);
+    },
+    cancelEditing: function () {
+      this.set('bufferedTitle', this.get('title'));
+      this.set('isEditing', false);
+    }
+  }
+});
+</code></pre></section><section data-markdown><script type="text/template" data-trim>## Pros
+
+- Performance previsível
+- Updates trasparentes
+- Desacoplamento máximo
+</script></section><section data-markdown><script type="text/template" data-trim>## Cons
+
+- Acesso indireto (`.set` &amp; `.get`)
+- Fluxo obscuro de dados
+</script></section></section><section><section data-markdown><script type="text/template" data-trim>## Angular
+`Dirty Checking`
+</script></section><section><pre><code data-trim class="hljs javascript">angular.module('todomvc')
+  .controller('TodoCtrl', function TodoCtrl($scope, $routeParams, $filter, store) {
+    var todos = $scope.todos = store.todos;
+
+    $scope.newTodo = '';
+    $scope.editedTodo = null;
+    $scope.addTodo = function () {
+      var newTodo = { title: $scope.newTodo.trim(), completed: false };
+      $scope.saving = true;
+      store.insert(newTodo).then(function success() {
+        $scope.newTodo = '';
+      }).finally(function () {
+        $scope.saving = false;
+      });
+    };
+  });
+</code></pre></section><section data-markdown><script type="text/template" data-trim>## Pros
+
+- Update transparente
+- Acesso direto as propriedades
+</script></section><section data-markdown><script type="text/template" data-trim>## Cons
+
+- Performance imprevisível
+- Fluxo obscuro de dados
+</script></section></section><section><section><h1>One-Way Data Flow</h1></section><section data-markdown><script type="text/template" data-trim>## React
+`Explicit update + Virtual Dom`
+</script></section><section><pre><code data-trim class="hljs javascript">var TodoApp = React.createClass({
+  toggle: function (todoToToggle) {
+    this.props.model.toggle(todoToToggle);
+  },
+  destroy: function (todo) {
+    this.props.model.destroy(todo);
+  },
+  render: function () {
+    var todo = this.props.todo;
+    return (
+      &lt;TodoItem
+        key={todo.id}
+        todo={todo}
+        onToggle={this.toggle.bind(this, todo)}
+        onDestroy={this.destroy.bind(this, todo)}
+      /&gt;
+    );
+  }
+});
+</code></pre></section><section data-markdown><script type="text/template" data-trim>## Pros
+
+- Fluxo explícito de dados
+- Performance previsível*
+</script></section><section data-markdown><script type="text/template" data-trim>## Cons
+
+- Atualizações explícitas
+- Sincronização de dados do servidor
+</script></section></section><section><section><h1>O que está por vir</h1></section></section><section><section data-markdown><script type="text/template" data-trim>## EcmaScript 6 
+`Proxy`
+
+`var proxObj = new Proxy(obj, handler)`
+</script></section><section data-markdown><script type="text/template" data-trim>## Traps
+
+```
+user.name // Get trap
+user.name = 'Tadeu'; // Set trap
+```
+</script></section><section data-markdown><script type="text/template" data-trim>## Traps disponíveis
+
+- set
+- get
+- defineProperty
+- deleteProperty
+- preventExtensions
+- has
+- enumerate
+- apply
+- construct
+- getOwnPropertyDescriptor
+- ownKeys
+</script></section><section><pre><code data-trim class="hljs javascript">user = { age: 30 };
+proxUser = new Proxy( user, {
+  get: function( target, prop ) {
+    if (prop in target) {
+      return target[property];
+    } else {
+      throw new ReferenceError(&quot;Property \&quot;&quot; + prop + &quot;\&quot; does not exist.&quot;);
+    }
+  }
+});
+console.log( user.name ); // undefined
+console.log( proxUser.name ); // Ref error
+</code></pre></section><section data-markdown><script type="text/template" data-trim># Observações
+- ES6 Proxy só está disponível no Firefox
+- Não existe transpiler para Proxy
+</script></section></section><section><section data-markdown><script type="text/template" data-trim>## EcmaScript 7
+`Object.observe` -&gt; `O.o`
+
+`Object.observe(obj, callback)`
+</script></section><section><pre><code data-trim class="hljs javascript">var GDG = {};
+Object.observe(GDG, function(changes) {
+   changes.forEach(function(change) {
+      console.log(change.type, change.name, change.oldValue);
+   });
+});
+GDG.nome = &quot;Juiz de Fora&quot;; // add nome undefined
+GDG.nome = &quot;Rio de Janeiro&quot;; // update nome &quot;Juiz de Fora&quot;
+</code></pre></section></section><section><section><h1>Immutable.js</h1><pre><code data-trim class="hljs javascript">var map = Immutable.Map({a:1, b:2, c:3});
+map = map.set('b', 20);
+map.get('b'); // 20
+</code></pre></section></section><section><section data-markdown><script type="text/template" data-trim>## Referências
+
+- [Yehuda Katz - A Day in the Life of an Ember Developer - BrazilJS 2014](https://www.youtube.com/watch?v=NM4EyOmaPbE)
+- [Data Binding [R]evolution](http://leobalter.github.io/data-binding-slides/output/)
+- [Flux](http://facebook.github.io/flux/)
+- [React](http://facebook.github.io/react/)
+- [Angular.js](https://angularjs.org/)
+- [Backbone.js](http://backbonejs.org/)
+- [Ember.js](http://emberjs.com/)
+</script></section></section><section><h1>Tadeu Zagallo</h1><br><ul class="no"><li> <a href="mailto:tadeuzagallo@gmail.com">tadeuzagallo@gmail.com</a></li><li><a href="http://twitter.com/tadeuzagallo">@tadeuzagallo</a></li><li><a href="http://github.com/tadeuzagallo">github.com/tadeuzagallo</a></li><li><a href="http://tadeuzagallo.com">tadeuzagallo.com</a></li></ul></section></div></div><script src="components/reveal.js/lib/js/head.min.js"></script><script src="components/reveal.js/js/reveal.min.js"></script><script src="js/main.js"></script></body></html>

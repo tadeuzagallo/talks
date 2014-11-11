@@ -1,0 +1,60 @@
+doctype html
+html
+  head
+    title #{title}
+    link(rel="stylesheet" href="components/reveal.js/css/reveal.min.css")
+    link(rel="stylesheet" href="components/reveal.js/css/theme/#{revealTheme}.css")
+    link(rel="stylesheet" href="components/reveal.js/lib/css/zenburn.css")
+    link(rel="stylesheet" href="css/main.css")
+  body
+    .reveal
+      .slides
+        section
+          h1 #{title}
+          br
+          ul.no
+            li 
+              a(href="mailto:#{author.email}") #{author.email}
+            li
+              a(href="http://twitter.com/#{author.twitter}") @#{author.twitter}
+            li
+              a(href="http://github.com/#{author.github}") github.com/#{author.github}
+            li
+              a(href="http://#{author.site}") #{author.site}
+        
+        each column in slides
+          section
+            each slide in column
+              if slide.markdown
+                section(data-markdown)
+                  script(type='text/template' data-trim)= slide.markdown
+              else
+                section
+                  if slide.title
+                    h1= slide.title
+                  if slide.image
+                    img(src=slide.image)
+                  if slide.quote
+                    blockquote= slide.quote
+                  if slide.text
+                    p= slide.text
+                  if slide.code
+                    pre
+                      code(data-trim class="hljs #{slide.code.language}")= slide.code.content
+
+        section
+          h1 #{author.name}
+          br
+          ul.no
+            li 
+              a(href="mailto:#{author.email}") #{author.email}
+            li
+              a(href="http://twitter.com/#{author.twitter}") @#{author.twitter}
+            li
+              a(href="http://github.com/#{author.github}") github.com/#{author.github}
+            li
+              a(href="http://#{author.site}") #{author.site}
+          
+    script(src="components/reveal.js/lib/js/head.min.js")
+    script(src="components/reveal.js/js/reveal.min.js")
+    script(src="js/main.js")

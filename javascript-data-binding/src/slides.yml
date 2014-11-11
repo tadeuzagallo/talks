@@ -1,0 +1,302 @@
+-
+  -
+    title: Data Binding
+    quote: Data binding is the process that establishes a connection between the application UI (User Interface) and business logic. If the settings and notifications are correctly set, the data reflects changes when made. It can also mean that when the UI is changed, the underlying data will reflect that change.
+
+  -
+    text: Qualquer alteração de dados deve refletir na interface
+
+  -
+    title: Nosso amigo jquery
+    code:
+      language: javascript
+      content: |
+        var $input = $('input');
+        var $label = $('label');
+
+        $input.on('input', function (e) {
+          $label.text($input.val());
+        });
+
+  -
+    title: Angular
+    code:
+      language: html
+      content: |
+        <input type="text" ng-model="yourName" placeholder="Enter a name here">
+        <h1>Hello {{yourName}}!</h1>
+
+-
+  -
+    markdown: |
+      ## Analisando alguns frameworks...
+
+      - Angular
+      - Ember
+      - Backbone
+      - React
+
+  -
+    title: Trends - 01/2013 a 11/2014
+    image: images/trends.png
+
+- 
+  -
+    title: Two-Way Data Binding
+    text: Sempre que o estado de um objeto é alterado a interface deve ser atualizada para o novo estado
+  -
+    title: Mas...
+    text: |
+      JavaScript não tem KVO... ainda...
+      Cada framework resolveu isso com diferentes estratégias
+
+-
+  -
+    markdown: |
+      ## Backbone 
+      Pub Sub, `.render()`
+  - 
+    code:
+      language: javascript
+      content: |
+        var TodoView = Backbone.View.extend({
+          tagName: "li",
+          template: _.template($('#item-template').html()),
+          initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'destroy', this.remove);
+            },
+          render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+          }
+        });
+
+        new TodoView({ model: model });
+  -
+    markdown: |
+      ### Pros
+
+      - Simples
+      - Relativamente Desacoplado
+  -
+    markdown: |
+      ### Cons
+
+      - Repetitivo
+      - Fluxo obscuro de dados
+
+-
+  -
+    markdown: |
+      ## Ember
+      `.set(key, value)`
+  -
+    code:
+      language: javascript
+      content: |
+        var TodoController = Ember.ObjectController.extend({
+          isEditing: false,
+          actions: {
+            editTodo: function () {
+              this.set('isEditing', true);
+            },
+            cancelEditing: function () {
+              this.set('bufferedTitle', this.get('title'));
+              this.set('isEditing', false);
+            }
+          }
+        });
+  -
+    markdown: |
+      ## Pros
+      
+      - Performance previsível
+      - Updates trasparentes
+      - Desacoplamento máximo
+
+  -
+    markdown: |
+      ## Cons
+
+      - Acesso indireto (`.set` & `.get`)
+      - Fluxo obscuro de dados
+
+-
+  -
+    markdown: |
+      ## Angular
+      `Dirty Checking`
+  -
+    code:
+      language: javascript
+      content: |
+        angular.module('todomvc')
+          .controller('TodoCtrl', function TodoCtrl($scope, $routeParams, $filter, store) {
+            var todos = $scope.todos = store.todos;
+
+            $scope.newTodo = '';
+            $scope.editedTodo = null;
+            $scope.addTodo = function () {
+              var newTodo = { title: $scope.newTodo.trim(), completed: false };
+              $scope.saving = true;
+              store.insert(newTodo).then(function success() {
+                $scope.newTodo = '';
+              }).finally(function () {
+                $scope.saving = false;
+              });
+            };
+          });
+  -
+    markdown: |
+      ## Pros
+
+      - Update transparente
+      - Acesso direto as propriedades
+  -
+    markdown: |
+      ## Cons
+
+      - Performance imprevisível
+      - Fluxo obscuro de dados
+
+- 
+  -
+    title: One-Way Data Flow
+  -
+    markdown: |
+      ## React
+      `Explicit update + Virtual Dom`
+
+  -
+    code:
+      language: javascript
+      content: |
+        var TodoApp = React.createClass({
+          toggle: function (todoToToggle) {
+            this.props.model.toggle(todoToToggle);
+          },
+          destroy: function (todo) {
+            this.props.model.destroy(todo);
+          },
+          render: function () {
+            var todo = this.props.todo;
+            return (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onToggle={this.toggle.bind(this, todo)}
+                onDestroy={this.destroy.bind(this, todo)}
+              />
+            );
+          }
+        });
+  -
+    markdown: |
+      ## Pros
+
+      - Fluxo explícito de dados
+      - Performance previsível*
+  -
+    markdown: |
+      ## Cons
+
+      - Atualizações explícitas
+      - Sincronização de dados do servidor
+-
+  -
+    title: O que está por vir
+-
+  -
+    markdown: |
+      ## EcmaScript 6 
+      `Proxy`
+
+      `var proxObj = new Proxy(obj, handler)`
+  -
+    markdown: |
+      ## Traps
+      
+      ```
+      user.name // Get trap
+      user.name = 'Tadeu'; // Set trap
+      ```
+  -
+    markdown: |
+      ## Traps disponíveis
+
+      - set
+      - get
+      - defineProperty
+      - deleteProperty
+      - preventExtensions
+      - has
+      - enumerate
+      - apply
+      - construct
+      - getOwnPropertyDescriptor
+      - ownKeys
+  - 
+    code:
+      language: javascript
+      content: |
+        user = { age: 30 };
+        proxUser = new Proxy( user, {
+          get: function( target, prop ) {
+            if (prop in target) {
+              return target[property];
+            } else {
+              throw new ReferenceError("Property \"" + prop + "\" does not exist.");
+            }
+          }
+        });
+        console.log( user.name ); // undefined
+        console.log( proxUser.name ); // Ref error
+
+  -
+    markdown: |
+      # Observações
+      - ES6 Proxy só está disponível no Firefox
+      - Não existe transpiler para Proxy
+
+-
+  -
+    markdown: |
+      ## EcmaScript 7
+      `Object.observe` -> `O.o`
+
+      `Object.observe(obj, callback)`
+  -
+    code:
+      language: javascript
+      content: |
+        var GDG = {};
+        Object.observe(GDG, function(changes) {
+           changes.forEach(function(change) {
+              console.log(change.type, change.name, change.oldValue);
+           });
+        });
+        GDG.nome = "Juiz de Fora"; // add nome undefined
+        GDG.nome = "Rio de Janeiro"; // update nome "Juiz de Fora"
+
+-
+  -
+    title: Immutable.js
+    code:
+      language: javascript
+      content: |
+        var map = Immutable.Map({a:1, b:2, c:3});
+        map = map.set('b', 20);
+        map.get('b'); // 20
+-
+  -
+    markdown: |
+      ## Referências
+
+      - [Yehuda Katz - A Day in the Life of an Ember Developer - BrazilJS 2014](https://www.youtube.com/watch?v=NM4EyOmaPbE)
+      - [Data Binding [R]evolution](http://leobalter.github.io/data-binding-slides/output/)
+      - [Flux](http://facebook.github.io/flux/)
+      - [React](http://facebook.github.io/react/)
+      - [Angular.js](https://angularjs.org/)
+      - [Backbone.js](http://backbonejs.org/)
+      - [Ember.js](http://emberjs.com/)
