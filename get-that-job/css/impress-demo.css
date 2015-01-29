@@ -1,0 +1,171 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+
+  margin: 0;
+  padding: 0;
+
+  /*background: radial-gradient(#4c67a1, #3c5998);*/
+  background: #3a5795;
+  color: white;
+  font-family: lucida grande, helvetica, arial;
+}
+
+a {
+  color: white;
+}
+
+.upper {
+  font-size: 10pt;
+  vertical-align: top;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  text-align: center;
+}
+
+h1 {
+  font-size: 40pt;
+  line-height: 45pt;
+}
+
+h2 {
+  font-size: 33pt;
+  line-height: 38pt;
+}
+
+h3 {
+  font-size: 25pt;
+  line-height: 30pt;
+}
+
+small {
+  font-size: 10pt;
+}
+
+.center {
+  text-align: center;
+}
+
+.middle {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.bigger {
+  font-size: 1.5em;
+}
+
+.huge.huge {
+  font-size: 50pt;
+}
+
+.step {
+  position: relative;
+
+  width: 900px;
+  height: 600px;
+  padding: 40px;
+  margin: 20px auto;
+}
+
+.slide {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.topics {
+  padding: 0;
+  margin: 0 auto;
+
+  font-size: 30pt;
+  list-style: square;
+}
+
+.timeline {
+  padding: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+
+  top: 50%;
+  width: 100%;
+  height: 4px;
+  margin-top: -2px;
+
+  background-color: white;
+}
+
+.year {
+  border-width: 0 2px;
+  border-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 58%, rgba(255,255,255,0) 100%) 1;
+}
+
+.year::before {
+  content: attr(data-year);
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 180pt;
+  line-height: 600px;
+  text-align: center;
+}
+
+.year.long {
+  width: 1800px;
+  height: 1200px;
+}
+
+.event {
+  overflow: visible;
+  position: absolute;
+
+  font-size: 20px;
+  text-align: center;
+  text-shadow: rgba(0,0,0,0.5) 0 0 8px;
+}
+
+.event:nth-of-type(even)::before,
+.event:nth-of-type(odd)::after {
+  content: '';
+  display: block;
+
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: rgba(0,0,0,0.5) 0 0 10px;
+}
+
+.event:nth-of-type(odd) {
+  bottom: 275px;
+}
+
+.event:nth-of-type(even) {
+  top: 275px;
+}
+
+.event:nth-of-type(odd)::after {
+  margin-top: 5px;
+}
+
+event:nth-of-type(even)::before {
+  margin-bottom: 10px;
+}
