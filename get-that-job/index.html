@@ -12,8 +12,6 @@
 <body>
 
 <div id="impress">
-  <div class="step" data-scale="100" data-y="5000"></div>
-
   <div class="step middle" data-y="-26000" data-scale="10">
     <h1>
       O que você deveria saber
@@ -37,8 +35,7 @@
     </h1>
   </div>
 
-  <div class="step timeline" data-scale="60">
-  </div>
+  <div class="step timeline" data-scale="60" style="z-index: -1;"></div>
 
   <div class="step year" data-x="-22500" data-year="2010" data-scale="10">
     <div class="event"style="left: 50%">Faculdade</div>
@@ -270,6 +267,8 @@
       <li><a target="_blank" href="http://www.hiredintech.com/">HiredInTech</a></li>
     </ul>
   </div>
+
+  <div class="step" data-scale="100" data-y="5000" style="z-index: -1;"></div>
 </div>
 
 <script src="js/impress.js"></script>
